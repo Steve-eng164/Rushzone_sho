@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f1117">
+<title>Learnix</title>
+<style>
+:root{
+  --accent:#6c5ce7; --bg:#0f1117; --bg2:#171a23; --bg3:#1e2230;
+  --txt:#e8e8ee; --muted:#8b8fa3; --border:#252a3a;
+  --danger:#e74c3c; --success:#2ecc71;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;
+  background:var(--bg); color:var(--txt); direction:rtl;
+  padding-bottom:90px; -webkit-tap-highlight-color:transparent;
+  min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer}
+#topbar{
+  position:sticky;top:0;z-index:10;display:flex;align-items:center;
+  padding:14px 16px;background:rgba(15,17,23,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+#title{font-weight:700;font-size:17px;flex:1;text-align:center}
+.topbtn{background:none;border:none;color:var(--txt);font-size:20px;padding:4px 10px}
+#nav{
+  position:fixed;bottom:0;left:0;right:0;display:flex;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:20;
+}
+#nav button{
+  flex:1;background:none;border:none;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:20px;padding:6px;
+}
+#nav button span{font-size:11px}
+#nav button.active{color:var(--accent)}
+.page{padding:16px;max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.btn{
+  background:var(--bg3);color:var(--txt);border:1px solid var(--border);
+  border-radius:12px;padding:12px 16px;font-size:14px;transition:transform .1s;
+}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:transparent;color:#fff;font-weight:600}
+.btn.danger{background:rgba(231,76,60,.15);color:#ff8b7e;border-color:rgba(231,76,60,.3)}
+.btn.success{background:rgba(46,204,113,.15);color:#7ef0a8;border-color:rgba(46,204,113,.3)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.row.gap .btn{flex:1}
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:14px;position:relative;display:flex;flex-direction:column;gap:6px;
+}
+.card .q{font-weight:600}
+.card .a{color:var(--muted);font-size:14px}
+.card .meta{color:var(--muted);font-size:12px}
+.card .icon-btn{position:absolute;top:8px;left:8px}
+.icon-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:4px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:19px;color:var(--accent)}
+.stat span{font-size:11px;color:var(--muted)}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qbtn{background:var(--bg2);border:1px solid var(--border);color:var(--txt);
+  border-radius:12px;padding:16px;font-size:14px;font-weight:600}
+.notice{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);
+  color:#ff9b8e;padding:10px 14px;border-radius:10px;font-size:13px}
+.notice.small{background:var(--bg2);border-color:var(--border);color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:14px}
+.muted{color:var(--muted);font-size:13px;text-align:center}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.progress{text-align:center;color:var(--muted);font-size:13px}
+.flashcard{
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  padding:28px;min-height:200px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:14px;text-align:center;
+}
+.flashcard .q{font-weight:700;font-size:20px}
+.flashcard .a{color:var(--accent);font-size:17px}
+.flashcard .divider{width:60px;height:1px;background:var(--border)}
+.flashcard textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:12px;color:var(--txt);font-family:inherit;
+  font-size:14px;resize:vertical;
+}
+select{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  color:var(--txt);border-radius:12px;padding:12px;font-family:inherit;font-size:14px;
+}
+.score{font-size:56px;font-weight:800;color:var(--accent);text-align:center}
+.colors{display:flex;gap:10px;flex-wrap:wrap}
+.swatch{width:40px;height:40px;border-radius:50%;border:2px solid var(--border)}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <button id="backBtn" class="topbtn" style="display:none">←</button>
+  <div id="title">لرنیکس</div>
+  <div style="width:40px"></div>
+</header>
+
+<main id="app"></main>
+
+<nav id="nav">
+  <button data-nav="dashboard">🏠<span>داشبورد</span></button>
+  <button data-nav="books">📚<span>کتاب‌ها</span></button>
+  <button data-nav="review">🔄<span>مرور</span></button>
+  <button data-nav="mistakes">⚠️<span>اشتباهات</span></button>
+  <button data-nav="settings">⚙️<span>تنظیمات</span></button>
+</nav>
+
+<script>
+/* ---------- داده ---------- */
+const KEY='learnix_v1';
+let db, stack=[], curView='dashboard', curCtx={};
+const app=document.getElementById('app');
+
+function uid(){return Math.random().toString(36).slice(2,10);}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function shuffle(a){const x=a.slice();for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+
+function load(){
+  try{ db=JSON.parse(localStorage.getItem(KEY))||null; }catch(e){ db=null; }
+  if(!db||typeof db!=='object') db={};
+  if(!db.books) db.books=[];
+  if(!db.mistakes) db.mistakes=[];
+  if(!db.stats) db.stats={reviews:0,exams:[]};
+  if(!db.theme) db.theme={accent:'#6c5ce7'};
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(db)); }
+function applyTheme(){ document.documentElement.style.setProperty('--accent', db.theme.accent); }
+
+/* ---------- روتر ---------- */
+const titles={dashboard:'لرنیکس',books:'کتاب‌ها',book:'درس‌ها',lesson:'فلش‌کارت‌ها',
+  review:'مرور',reviewPlay:'مرور',examPlay:'آزمون',result:'نتیجه',
+  mistakes:'اشتباهات',settings:'تنظیمات'};
+
+function go(view, ctx={}, push=true){
+  if(push && curView) stack.push({view:curView, ctx:curCtx});
+  curView=view; curCtx=ctx; render();
+}
+function back(){
+  const p=stack.pop();
+  if(p){ curView=p.view; curCtx=p.ctx; render(); }
+  else { curView='dashboard'; curCtx={}; render(); }
+}
+document.getElementById('backBtn').onclick=back;
+
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.onclick=()=>{ stack=[]; go(b.dataset.nav, {}, false); };
+});
+
+function render(){
+  document.getElementById('title').textContent = titles[curView]||'لرنیکس';
+  document.getElementById('backBtn').style.display = stack.length ? 'inline-block' : 'none';
+  app.innerHTML='';
+  switch(curView){
+    case 'dashboard': renderDashboard(); break;
+    case 'books': renderBooks(); break;
+    case 'book': renderBook(); break;
+    case 'lesson': renderLesson(); break;
+    case 'review': renderReviewSetup(); break;
+    case 'reviewPlay': renderReviewPlay(); break;
+    case 'examPlay': renderExamPlay(); break;
+    case 'result': renderResult(); break;
+    case 'mistakes': renderMistakes(); break;
+    case 'settings': renderSettings(); break;
+  }
+  document.querySelectorAll('#nav button').forEach(b=>{
+    b.classList.toggle('active',
+      b.dataset.nav===curView ||
+      (curView==='book'&&b.dataset.nav==='books') ||
+      (curView==='lesson'&&b.dataset.nav==='books'));
+  });
+}
+
+/* ---------- داشبورد ---------- */
+function renderDashboard(){
+  const totalCards=db.books.reduce((s,b)=>s+b.lessons.reduce((t,l)=>t+l.cards.length,0),0);
+  const totalLessons=db.books.reduce((s,b)=>s+b.lessons.length,0);
+  app.innerHTML=`
+    <div class="page">
+      <div class="stats">
+        <div class="stat"><b>${db.books.length}</b><span>کتاب</span></div>
+        <div class="stat"><b>${totalLessons}</b><span>درس</span></div>
+        <div class="stat"><b>${totalCards}</b><span>کارت</span></div>
+        <div class="stat"><b>${db.stats.reviews}</b><span>مرور</span></div>
+      </div>
+      <div class="quick">
+        <button class="qbtn" onclick="go('review')">🔄 مرور</button>
+        <button class="qbtn" onclick="go('books')">📚 کتاب‌ها</button>
+        <button class="qbtn" onclick="go('mistakes')">⚠️ اشتباهات</button>
+        <button class="qbtn" onclick="go('settings')">⚙️ تنظیمات</button>
+      </div>
+      ${db.mistakes.length ? `<div class="notice">${db.mistakes.length} اشتباه در انتظار مرور</div>` : ''}
+    </div>`;
+}
+
+/* ---------- کتاب‌ها ---------- */
+function renderBooks(){
+  app.innerHTML=`
+    <div class="page">
+      <button class="btn primary" onclick="addBook()">+ کتاب جدید</button>
+      ${db.books.length===0?'<div class="empty">هنوز کتابی نساخته‌ای</div>':
+        db.books.map(b=>`
+          <div class="card" onclick="go('book',{bookId:'${b.id}'})">
+            <div class="row"><b>${esc(b.name)}</b>
+            <span class="muted" style="text-align:left">${b.lessons.length} درس</span></div>
+          </div>`).join('')}
+    </div>`;
+}
+function addBook(){
+  const n=prompt('نام کتاب:');
+  if(!n||!n.trim())return;
+  db.books.push({id:uid(), name:n.trim(), lessons:[]});
+  save(); render();
+}
+
+/* ---------- درس‌ها ---------- */
+function renderBook(){
+  const b=db.books.find(x=>x.id===curCtx.bookId);
+  if(!b){ back(); return; }
+  app.innerHTML=`
+    <div class="page">
+      <div class="header-row">
+        <h3>${esc(b.name)}</h3>
+        <button class="icon-btn" onclick="delBook('${b.id}')">🗑</button>
+      </div>
+      <button class="btn primary" onclick="addLesson('${b.id}')">+ درس جدید</button>
+      ${b.lessons.length===0?'<div class="empty">درسی اضافه کن</div>':
+        b.lessons.map(l=>`
+          <div class="card" onclick="go('lesson',{bookId:'${b.id}',lessonId:'${l.id}'})">
+            <div class="row"><b>${esc(l.name)}</b>
+            <span class="muted" style="text-align:left">${l.cards.length} کارت</span></div>
+          </div>`).join('')}
+    </div>`;
+}
+function addLesson(bid){
+  const n=prompt('نام درس:');
+  if(!n||!n.trim())return;
+  const b=db.books.find(x=>x.id===bid);
+  b.lessons.push({id:uid(), name:n.trim(), cards:[]});
+  save(); render();
+}
+function delBook(id){
+  if(!confirm('حذف این کتاب و همه درس‌هایش؟')) return;
+  db.books=db.books.filter(x=>x.id!==id); save(); back();
+}
+function delLesson(bid,lid){
+  if(!confirm('حذف این درس؟')) return;
+  const b=db.books.find(x=>x.id===bid);
+  b.lessons=b.lessons.filter(x=>x.id!==lid); save(); back();
+}
+
+/* ---------- فلش‌کارت‌ها ---------- */
+function renderLesson(){
+  const {bookId,lessonId}=curCtx;
+  const b=db.books.find(x=>x.id===bookId);
+  const l=b&&b.lessons.find(x=>x.id===lessonId);
+  if(!l){ back(); return; }
+  app.innerHTML=`
+    <div class="page">
+      <div class="header-row">
+        <h3>${esc(l.name)}</h3>
+        <button class="icon-btn" onclick="delLesson('${bookId}','${lessonId}')">🗑</button>
+      </div>
+      <div class="row gap">
+        <button class="btn primary" onclick="addCard('${bookId}','${lessonId}')">+ کارت</button>
+        <button class="btn" onclick="startReview('${bookId}','${lessonId}')" ${l.cards.length?'':'disabled'}>🔄 مرور</button>
+        <button class="btn" onclick="startExam('${bookId}','${lessonId}')" ${l.cards.length?'':'disabled'}>📝 آزمون</button>
+      </div>
+      ${l.cards.length===0?'<div class="empty">فلش‌کارتی نداری</div>':
+        l.cards.map(c=>`
+          <div class="card">
+            <div class="q">${esc(c.q)}</div>
+            <div class="a">${esc(c.a)}</div>
+            <button class="icon-btn" onclick="delCard('${bookId}','${lessonId}','${c.id}')">🗑</button>
+          </div>`).join('')}
+    </div>`;
+}
+function addCard(bid,lid){
+  const q=prompt('سؤال (روی کارت):'); if(!q||!q.trim())return;
+  const a=prompt('جواب:'); if(!a||!a.trim())return;
+  const b=db.books.find(x=>x.id===bid);
+  const l=b.lessons.find(x=>x.id===lid);
+  l.cards.push({id:uid(), q:q.trim(), a:a.trim()});
+  save(); render();
+}
+function delCard(bid,lid,cid){
+  if(!confirm('حذف کارت؟')) return;
+  const b=db.books.find(x=>x.id===bid);
+  const l=b.lessons.find(x=>x.id===lid);
+  l.cards=l.cards.filter(x=>x.id!==cid); save(); render();
+}
+
+/* ---------- مرور ---------- */
+function renderReviewSetup(){
+  const opts=[];
+  db.books.forEach(b=>b.lessons.forEach(l=>{
+    if(l.cards.length) opts.push(`<option value="${b.id}|${l.id}">${esc(b.name)} — ${esc(l.name)} (${l.cards.length})</option>`);
+  }));
+  if(!opts.length){ app.innerHTML='<div class="page"><div class="empty">هنوز فلش‌کارتی نساخته‌ای</div></div>'; return; }
+  app.innerHTML=`
+    <div class="page">
+      <p class="muted">یک درس برای مرور انتخاب کن</p>
+      <select id="pick">${opts.join('')}</select>
+      <button class="btn primary" onclick="startReview(...document.getElementById('pick').value.split('|'))">شروع مرور</button>
+      <button class="btn" onclick="startReviewAll()">مرور همه کارت‌ها</button>
+    </div>`;
+}
+function startReview(bid,lid){
+  const b=db.books.find(x=>x.id===bid);
+  const l=b.lessons.find(x=>x.id===lid);
+  const cards=l.cards.map(c=>({...c, book:b.name, lesson:l.name}));
+  openSession(shuffle(cards),'review');
+}
+function startReviewAll(){
+  const all=[];
+  db.books.forEach(b=>b.lessons.forEach(l=>l.cards.forEach(c=>
+    all.push({...c, book:b.name, lesson:l.name}))));
+  if(!all.length){ alert('هنوز فلش‌کارتی نساخته‌ای'); return; }
+  openSession(shuffle(all),'review');
+}
+function reviewMistakes(){
+  const cards=db.mistakes.map(m=>({q:m.q,a:m.a,book:m.book,lesson:m.lesson}));
+  if(!cards.length) return;
+  openSession(shuffle(cards),'review');
+  window._session.fromMistakes=true;
+}
+function openSession(cards, mode){
+  window._session={cards, idx:0, revealed:false, mode,
+    correct:0, wrong:0, results:[], userAns:'', fromMistakes:false};
+  go(mode==='review'?'reviewPlay':'examPlay');
+}
+
+function renderReviewPlay(){
+  const s=window._session;
+  if(!s || s.idx>=s.cards.length){
+    app.innerHTML=`<div class="page">
+      <h2 style="text-align:center">✅ مرور تمام شد</h2>
+      <div class="score">${s?s.correct:0} / ${s?s.cards.length:0}</div>
+      <p class="muted">درست: ${s?s.correct:0} · اشتباه: ${s?s.wrong:0}</p>
+      <button class="btn primary" onclick="go('dashboard')">بازگشت به خانه</button>
+    </div>`;
+    return;
+  }
+  const c=s.cards[s.idx];
+  app.innerHTML=`
+    <div class="page">
+      <div class="progress">${s.idx+1} از ${s.cards.length}</div>
+      <div class="flashcard" onclick="revealReview()">
+        <div class="q">${esc(c.q)}</div>
+        ${s.revealed
+          ? `<div class="divider"></div><div class="a">${esc(c.a)}</div>`
+          : '<div class="muted">برای دیدن جواب بزن</div>'}
+      </div>
+      ${s.revealed?`
+        <div class="row gap">
+          <button class="btn danger" onclick="answerReview(false)">❌ نمی‌دانستم</button>
+          <button class="btn success" onclick="answerReview(true)">✅ می‌دانستم</button>
+        </div>`:''}
+    </div>`;
+}
+function revealReview(){ window._session.revealed=true; render(); }
+function answerReview(ok){
+  const s=window._session; const c=s.cards[s.idx];
+  if(ok){
+    s.correct++;
+    if(s.fromMistakes){
+      db.mistakes=db.mistakes.filter(m=>!(m.q===c.q && m.a===c.a));
+      save();
+    }
+  } else { s.wrong++; addMistake(c); }
+  db.stats.reviews++; save();
+  s.idx++; s.revealed=false; render();
+}
+
+/* ---------- آزمون ---------- */
+function startExam(bid,lid){
+  const b=db.books.find(x=>x.id===bid);
+  const l=b.lessons.find(x=>x.id===lid);
+  if(!l.cards.length){ alert('کارتی نیست'); return; }
+  const cards=shuffle(l.cards.map(c=>({...c, book:b.name, lesson:l.name})));
+  openSession(cards,'exam');
+}
+function renderExamPlay(){
+  const s=window._session;
+  if(!s || s.idx>=s.cards.length){ showResult(); return; }
+  const c=s.cards[s.idx];
+  app.innerHTML=`
+    <div class="page">
+      <div class="progress">${s.idx+1} از ${s.cards.length}</div>
+      <div class="flashcard">
+        <div class="q">${esc(c.q)}</div>
+        ${s.revealed
+          ? `<div class="divider"></div><div class="a">${esc(c.a)}</div>`
+          : `<textarea id="ans" placeholder="پاسخ خود را بنویس..." rows="4"></textarea>`}
+      </div>
+      ${s.revealed
+        ? `<p class="muted">پاسخ خود را با جواب مقایسه کن</p>
+           <div class="row gap">
+             <button class="btn danger" onclick="answerExam(false)">❌ غلط</button>
+             <button class="btn success" onclick="answerExam(true)">✅ صحیح</button>
+           </div>`
+        : `<button class="btn primary" onclick="revealExam()">نمایش پاسخ</button>`}
+    </div>`;
+}
+function revealExam(){
+  const s=window._session;
+  const t=document.getElementById('ans');
+  s.userAns = t ? t.value.trim() : '';
+  s.revealed=true; render();
+}
+function answerExam(ok){
+  const s=window._session; const c=s.cards[s.idx];
+  s.results.push({q:c.q, a:c.a, userAns:s.userAns||'', ok});
+  if(ok) s.correct++;
+  else { s.wrong++; addMistake(c); }
+  s.idx++; s.revealed=false; s.userAns=''; render();
+}
+function showResult(){
+  const s=window._session;
+  const total=s.cards.length;
+  const pct=total?Math.round(s.correct/total*100):0;
+  db.stats.exams.push({date:Date.now(), correct:s.correct, total, pct});
+  save();
+  stack=[]; curView='result'; curCtx={s}; render();
+}
+function renderResult(){
+  const s=curCtx.s || window._session;
+  const total=s.cards.length;
+  const pct=total?Math.round(s.correct/total*100):0;
+  app.innerHTML=`
+    <div class="page">
+      <h2 style="text-align:center">${pct>=60?'🎉':'📚'} نتیجه آزمون</h2>
+      <div class="score">${pct}%</div>
+      <p class="muted">صحیح: ${s.correct} · غلط: ${s.wrong} · کل: ${total}</p>
+      <div class="row gap">
+        <button class="btn primary" onclick="go('dashboard')">خانه</button>
+        <button class="btn" onclick="go('mistakes')">دفتر اشتباهات</button>
+      </div>
+      <h3 style="margin-top:8px">مرور پاسخ‌ها</h3>
+      ${s.results.map(r=>`
+        <div class="card">
+          <div class="q">${esc(r.q)}</div>
+          <div class="a">جواب: ${esc(r.a)}</div>
+          ${r.userAns?`<div class="meta">پاسخ تو: ${esc(r.userAns)}</div>`:''}
+          <div class="meta" style="color:${r.ok?'var(--success)':'var(--danger)'}">
+            ${r.ok?'✅ صحیح':'❌ غلط'}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ---------- دفتر اشتباهات ---------- */
+function addMistake(c){
+  if(db.mistakes.some(m=>m.q===c.q && m.a===c.a)) return;
+  db.mistakes.push({id:uid(), q:c.q, a:c.a, book:c.book||'', lesson:c.lesson||'', date:Date.now()});
+  save();
+}
+function renderMistakes(){
+  app.innerHTML=`
+    <div class="page">
+      <div class="header-row">
+        <h3>اشتباهات (${db.mistakes.length})</h3>
+        ${db.mistakes.length?'<button class="btn" onclick="reviewMistakes()">🔄 مرور</button>':''}
+      </div>
+      ${db.mistakes.length===0?'<div class="empty">هنوز اشتباهی ثبت نشده ✅</div>':
+        db.mistakes.map(m=>`
+          <div class="card">
+            <div class="q">${esc(m.q)}</div>
+            <div class="a">${esc(m.a)}</div>
+            <div class="meta">${esc(m.book)} · ${esc(m.lesson)}</div>
+            <button class="icon-btn" onclick="delMistake('${m.id}')">🗑</button>
+          </div>`).join('')}
+    </div>`;
+}
+function delMistake(id){
+  db.mistakes=db.mistakes.filter(m=>m.id!==id); save(); render();
+}
+
+/* ---------- تنظیمات ---------- */
+function renderSettings(){
+  app.innerHTML=`
+    <div class="page">
+      <h3>رنگ برنامه</h3>
+      <div class="colors">
+        ${['#6c5ce7','#e84393','#00b894','#0984e3','#e17055','#fdcb6e'].map(c=>
+          `<button class="swatch" style="background:${c}" onclick="setAccent('${c}')"></button>`).join('')}
+      </div>
+      <h3 style="margin-top:8px">پشتیبان‌گیری</h3>
+      <div class="row gap">
+        <button class="btn" onclick="backup()">📤 خروجی JSON</button>
+        <button class="btn" onclick="restore()">📥 بازیابی</button>
+      </div>
+      <div class="notice small">داده‌ها فقط روی همین دستگاه ذخیره می‌شوند</div>
+    </div>`;
+}
+function setAccent(c){ db.theme.accent=c; save(); applyTheme(); }
+function backup(){
+  const blob=new Blob([JSON.stringify(db)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='learnix-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function restore(){
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const d=JSON.parse(r.result);
+        if(!d.books||!Array.isArray(d.books)) throw 0;
+        db=d; save(); applyTheme(); alert('بازیابی انجام شد'); render();
+      }catch(err){ alert('فایل معتبر نیست'); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+/* ---------- شروع ---------- */
+(function init(){
+  const firstRun = localStorage.getItem(KEY)===null;
+  load();
+  if(firstRun){
+    db.books=[{id:uid(), name:'کتاب نمونه', lessons:[{
+      id:uid(), name:'درس نمونه', cards:[
+        {id:uid(), q:'پایتخت ایران کجاست؟', a:'تهران'},
+        {id:uid(), q:'۲ + ۲ چند است؟', a:'۴'}
+      ]}]}];
+    save();
+  }
+  applyTheme();
+  render();
+})();
+</script>
+</body>
+</html>
